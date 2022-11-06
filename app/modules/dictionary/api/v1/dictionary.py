@@ -1,7 +1,4 @@
-from datetime import date
-
 from fastapi import APIRouter, Depends
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.modules.dictionary.models import Language, Book, Author
@@ -14,7 +11,7 @@ router = APIRouter()
 # получить всех авторов
 @router.get("/Authors")
 def read_root(session: Session = Depends(get_db)):
-    try:
+    #try:
         return [
             {
                 "ФИО": x.fio,
@@ -22,8 +19,8 @@ def read_root(session: Session = Depends(get_db)):
                 "Биография": x.biography
             } for x in session.query(Author)
         ]
-    except:
-        return {"status": "no data to return"}
+    #except:
+        #return {"status": "no data to return"}
 
 
 # получить все языки
@@ -57,7 +54,7 @@ def read_root(session: Session = Depends(get_db)):
         return {"status": "no data to return"}
 
 
-#поиск книг данного автора (на любом языке или на конкретном, среди прочитанных, среди планируемых к прочтению)
+# поиск книг данного автора (на любом языке или на конкретном, среди прочитанных, среди планируемых к прочтению)
 # если значение id языка дефолтное (-1) то читай книги на всех языках, дефолтное значение для чтения = Не прочитана
 @router.get("/authors_book")
 def read_root(id: int, id_languages :int = -1, read: bool = False, session: Session = Depends(get_db)):
