@@ -11,7 +11,7 @@ router = APIRouter()
 # получить всех авторов
 @router.get("/Authors")
 def read_root(session: Session = Depends(get_db)):
-    #try:
+    try:
         return [
             {
                 "ФИО": x.fio,
@@ -19,8 +19,8 @@ def read_root(session: Session = Depends(get_db)):
                 "Биография": x.biography
             } for x in session.query(Author)
         ]
-    #except:
-        #return {"status": "no data to return"}
+    except:
+        return {"status": "no data to return"}
 
 
 # получить все языки
