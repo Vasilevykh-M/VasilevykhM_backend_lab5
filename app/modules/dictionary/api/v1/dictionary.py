@@ -56,7 +56,9 @@ def read_root(session: Session = Depends(get_db)):
     except:
         return {"status": "no data to return"}
 
-#поиск книг данного автора (на любом языке или на конкретном, среди прочитанных, среди планируемых к прочтению);
+
+#поиск книг данного автора (на любом языке или на конкретном, среди прочитанных, среди планируемых к прочтению)
+# если значение id языка дефолтное (-1) то читай книги на всех языках, дефолтное значение для чтения = Не прочитана
 @router.get("/authors_book")
 def read_root(id: int, id_languages :int = -1, read: bool = False, session: Session = Depends(get_db)):
     books = session.query(Book, Language, Author).join(Language).join(Author).filter(Book.id_author == id, Book.state_read == read)
@@ -101,7 +103,8 @@ def read_root(session: Session = Depends(get_db)):
         return {"status": "no data to return"}
 
 
-# поиск всех планируемых к прочтению книг (на любом языке или конкретном);
+# поиск всех планируемых к прочтению книг (на любом языке или конкретном)
+# если значение id языка дефолтное (-1) то читай книги на всех языках, дефолтное значение для чтения = Не прочитана
 @router.get("/not_read_book")
 def read_root(id_languages :int = -1, session: Session = Depends(get_db)):
     books = session.query(Book, Language, Author).join(Language).join(Author).filter(Book.state_read == False)
@@ -164,6 +167,7 @@ def read_root(name_book :str, session: Session = Depends(get_db)):
 
 # добавить ии изменить язык
 # если язык есть изменить его имя, если нет то создать
+# если id языка нет то мы его создаем иначе изменяем его поля
 @router.post("/languages/add")
 def read_item(id: int, language: str, session: Session = Depends(get_db)):
     languag = session.query(Language).filter(Language.id == id).first()
@@ -179,6 +183,8 @@ def read_item(id: int, language: str, session: Session = Depends(get_db)):
 
 
 # создать или изменит автора
+# по дефолту поэтому можно указывать не все параметры
+# если id автора нет то мы его создаем иначе изменяем его поля
 @router.post("/authors/add")
 def read_item(id: int, fio="", birthday="", biography="", session: Session = Depends(get_db)):
     author = session.query(Author).filter(Author.id == id).first()
@@ -202,6 +208,7 @@ def read_item(id: int, fio="", birthday="", biography="", session: Session = Dep
 
 # создать или изменить книгу
 # если книга есть то мы обязаны изменить её состояние (можем оставить на том же)
+# если id книги нет то мы его создаем иначе изменяем его поля
 @router.post("/books/add")
 def read_item(id: int, state_read: bool, name_book="", year_book ="", id_language:int= -1, id_author:int = -1, session: Session = Depends(get_db)):
     book = session.query(Book).filter(Book.id == id).first()
@@ -248,6 +255,8 @@ def read_item(id: int, state_read: bool, name_book="", year_book ="", id_languag
         session.commit()
         return {"status": "OK"}
 
+
+# удаление автора по id
 @router.delete("/authors/delete")
 def read_item(id: int,session: Session = Depends(get_db)):
     author = session.query(Author).filter(Author.id == id).first()
@@ -259,6 +268,7 @@ def read_item(id: int,session: Session = Depends(get_db)):
         return {"status": "no have all need data"}
 
 
+#удаление книги по id
 @router.delete("/book/delete")
 def read_item(id: int, session: Session = Depends(get_db)):
     book = session.query(Book).filter(Book.id == id).first()
@@ -268,21 +278,3 @@ def read_item(id: int, session: Session = Depends(get_db)):
         return {"status": "OK"}
     else:
         return {"status": "no have all need data"}
-
-#@router.post("/items/{word}/{translation}")
-#def read_item(word: str, translation: str, session: Session = Depends(get_db)):
-#    lang = session.query(Lang).first()
-#    if not lang:
-#        lang = Lang(name="english", abbr="EN")
-#        session.add(lang)
-#        session.commit()
-
-#    new_word = Word(name=word, lang_id=lang.id)
-#    session.add(new_word)
-#    session.commit()
-
-#    new_translation = Translation(name=translation, word=new_word)
-#    session.add(new_translation)
-#    session.commit()
-
-#    return {"status": "success"}

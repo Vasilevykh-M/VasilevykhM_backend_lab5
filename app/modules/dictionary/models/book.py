@@ -9,8 +9,8 @@ class Book(Base):
     id = Column(Integer, primary_key = True)
     name_book = Column(Text, nullable = True)
     year_book = Column(Date, nullable = False)
-    id_language = Column(Integer, ForeignKey('language.id'), nullable = True)
-    id_author = Column(Integer, ForeignKey('author.id'), nullable = True)
+    id_language = Column(Integer, ForeignKey('language.id', ondelete="CASCADE"), nullable = True)
+    id_author = Column(Integer, ForeignKey('author.id', ondelete="CASCADE"), nullable = True)
     state_read = Column(Boolean, nullable= False)
 
     def __init__(self, *args, **kwargs):
